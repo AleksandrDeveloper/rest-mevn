@@ -32,11 +32,18 @@ new Vue({
 
       this.form.name = this.form.value = "";
     },
-    markContact(id) {
-      const contact = this.contacts.find((i) => i.id === id);
-      contact.marked = true;
+    async markContact(id) {
+        const contact = this.contacts.find(c => c.id === id)
+        const updated = await request(`/api/contacts/${id}`, 'PUT', {
+          ...contact,
+          marked: true
+        })
+        contact.marked = updated.marked
     },
-    removeContact(id) {},
+    async removeContact(id) {
+        await request(`/api/contacts/${id}`, 'DELETE') 
+      this.contacts = this.contacts.filter(c => c.id !== id)
+    },
   },
   async mounted() {
     this.loading = true;
